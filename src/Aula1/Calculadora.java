@@ -79,18 +79,20 @@ public class Calculadora extends JFrame implements ActionListener{
     }
     
     public static void main(String[] args) {
-        new Calculadora();
+        Calculadora calculadora = new Calculadora();
     }
     
     /**
      *
      * @param e
      */
+    @Override
     public void actionPerformed(ActionEvent e){
         
         double n1 = Double.parseDouble(txtN1.getText());
         double n2 = Double.parseDouble(txtN2.getText());
         double r = 0;
+        
         
         if(e.getSource() == btSoma)
             r = n1 + n2;
