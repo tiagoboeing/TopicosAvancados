@@ -114,4 +114,5 @@ public class Calculadora extends JFrame implements ActionListener{
             txtRes.setBorder(BorderFactory.createLineBorder(Color.RED,10));
     }
     
+    
 }
