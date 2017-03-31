@@ -121,12 +121,7 @@ public class TelaAvaliacaoPratica extends JFrame{
         painel.add(btIniciarProducao);
         
         
-        
-        
-        
-        
-        
-        
+        //arquivo back funções
         
         setContentPane(painel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
