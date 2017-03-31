@@ -66,11 +66,13 @@ public class TelaAvaliacaoPratica extends JFrame{
         Maq1_barra.setStringPainted(true);
         Maq1_producao_barra = new JProgressBar();
         Maq1_producao_barra.setStringPainted(true);
+        Maq1_producao_barra.setString("% concluído");
         
         Maq2_barra = new JProgressBar();
         Maq2_barra.setStringPainted(true);
         Maq2_producao_barra = new JProgressBar();
         Maq2_producao_barra.setStringPainted(true);
+        Maq2_producao_barra.setString("% concluído");
         
         btIniciarProducao = new JButton("Iniciar a produção");
         btLimpar = new JButton("Limpar campos");
