@@ -29,23 +29,24 @@ public class BarrasProgresso extends Thread{
         //converte tempo máximo (horas) para segundos
         Double HorasEmSegundos = tempoMax*3600;
         
-        Double porcentagem = Double.parseDouble(intervaloPecas/(HorasEmSegundos*100));
+        //Double porcentagem = Double.parseDouble(intervaloPecas/(HorasEmSegundos*100));
         
         this.barra.setMinimum(0);
         this.barra.setMaximum(100);
-        this.barra.setValue(porcentagem);
-        this.barra.setString(porcentagem+"%");
+//        this.barra.setValue(porcentagem);
+//        this.barra.setString(porcentagem+"%");
         
     }
     
     // atualiza barra em intervalo de segundos
     public void run(){
         
-//        try{
-//            for(int i=0; i < 100; i++){
-//                Thread.sleep();
-//            }
-//        }
+        for(int i=0; i < 100; i++){
+            barra.setValue(i);
+            barra.setValue(i);
+            //sleep(1000);
+        }
+       
         
     }
     
