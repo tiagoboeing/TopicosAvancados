@@ -6,6 +6,7 @@
 package AvaliacaoPratica;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -117,11 +118,15 @@ public class TelaAvaliacaoPratica extends JFrame{
         painel.add(Maq1_producao_barra);
         painel.add(Maq2_producao_barra);
         
-        painel.add(btLimpar);
-        painel.add(btIniciarProducao);
-        
         
         //arquivo back funções
+        BackAvaliacaoPratica back = new BackAvaliacaoPratica();
+        
+        painel.add(btLimpar);
+        btLimpar.addActionListener((ActionListener) back);
+        
+        painel.add(btIniciarProducao);
+        btIniciarProducao.addActionListener((ActionListener) back);
         
         setContentPane(painel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
