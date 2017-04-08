@@ -58,7 +58,7 @@ public class TelaPrincipal extends Shell {
 				abreAba(c, "Cadastro de cidades");
 			}
 		});
-		mntmCidade.setText("Cidade");
+		mntmCidade.setText("&Cidade");
 		
 		MenuItem mntmPessoa = new MenuItem(menu_1, SWT.NONE);
 		mntmPessoa.addSelectionListener(new SelectionAdapter() {
@@ -68,7 +68,7 @@ public class TelaPrincipal extends Shell {
 				abreAba(c, "Cadastro de pessoas");
 			}
 		});
-		mntmPessoa.setText("Pessoa");
+		mntmPessoa.setText("&Pessoa");
 		
 		MenuItem mntmRelatrios_1 = new MenuItem(menu_1, SWT.CASCADE);
 		mntmRelatrios_1.setText("Relat\u00F3rios");
@@ -90,6 +90,9 @@ public class TelaPrincipal extends Shell {
 			}
 		});
 		mntmSair.setText("Sair");
+		
+		MenuItem mntmSobre = new MenuItem(menu, SWT.NONE);
+		mntmSobre.setText("Sobre");
 		
 		tabFolder = new CTabFolder(this, SWT.BORDER);
 		tabFolder.setBounds(10, 10, 612, 426);
@@ -114,12 +117,24 @@ public class TelaPrincipal extends Shell {
 	
 	private void abreAba(Composite c, String titulo){
 		
-		CTabItem teste1 = new CTabItem(tabFolder, SWT.NONE);
-		teste1.setShowClose(true);
-		teste1.setText("Teste 1");
-		teste1.setText(titulo);
-		teste1.setControl(c);
-		tabFolder.setSelection(teste1);
+		boolean aberta = false;
+		
+		for(int i = 0; i< tabFolder.getItemCount(); i++){
+			CTabItem x = tabFolder.getItem(i);
+			if(x.getText().equals(titulo)){
+				tabFolder.setSelection(x);
+				aberta = true;
+			}
+		}
+		
+		if(!aberta){
+			CTabItem teste1 = new CTabItem(tabFolder, SWT.NONE);
+			teste1.setShowClose(true);
+			teste1.setText("Teste 1");
+			teste1.setText(titulo);
+			teste1.setControl(c);
+			tabFolder.setSelection(teste1);	
+		}
 		
 		
 	}
