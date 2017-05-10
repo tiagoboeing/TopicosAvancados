@@ -1,5 +1,5 @@
-Lápis,5,2
-Borracha,20,1
-Produto 1,20,3
-teste,10,20
-teste,10,2
+,,
+tiago,21,22
+tiago,21,22
+tasfa,,
+tasfa,2,2

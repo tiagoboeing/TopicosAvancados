@@ -2,8 +2,10 @@ package arquivos;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -16,18 +18,20 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import jdk.jfr.events.FileWriteEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 public class Cadastro1 extends Shell {
+	
 	private Text txtNome;
 	private Text txtQtde;
 	private Text txtValor;
 	private Table tabelaLista;
 	private Text txtValorTotal;
+	
+	ArrayList<Produto> listaProdutos = new ArrayList<Produto>();
 
 	/**
 	 * Launch the application.
@@ -92,7 +96,26 @@ public class Cadastro1 extends Shell {
 		tabelaLista.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
+				
 				//criar método excluir
+				try {
+					
+					int indiceTabela = tabelaLista.getSelectionIndex();
+					System.out.println(indiceTabela+"\n");
+					
+					atualizaArquivo(indiceTabela);
+					
+					
+					//checa o que acontece
+					/*for(Produto produto : listaProdutos){
+						System.out.println(produto.toString());
+					}*/
+					
+					
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+				
 			}
 		});
 		tabelaLista.setBounds(10, 148, 469, 212);
@@ -134,6 +157,13 @@ public class Cadastro1 extends Shell {
 		
 		leArquivo();
 		
+		
+		/*for(Produto produto : listaProdutos){
+			
+			System.out.println(produto.toString());
+			
+		}*/
+		
 	}
 
 	/**
@@ -160,6 +190,7 @@ public class Cadastro1 extends Shell {
 			BufferedWriter bw = new BufferedWriter(fw);
 			
 			String linha = txtNome.getText()+","+txtQtde.getText() + "," + txtValor.getText() + "\n";
+				
 			
 			bw.append(linha);
 			
@@ -199,10 +230,22 @@ public class Cadastro1 extends Shell {
 				total += subTotal;
 				TableItem it = new TableItem(tabelaLista, SWT.NONE);
 
+				//NOME DO PRODUTO
 				it.setText(0, dados[0]);
+				
+				//QTDE
 				it.setText(1, dados[1]);
+				
+				//VALOR
 				it.setText(2, dados[2]);
+				
+				//SUBTOTAL
 				it.setText(3, subTotal + "");
+				
+				
+					//joga valores para o arraylist
+					Produto produto = new Produto(dados[0], dados[1], dados[2]);
+					listaProdutos.add(produto);
 					
 			}
 			
@@ -214,6 +257,43 @@ public class Cadastro1 extends Shell {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	
+
+	private void atualizaArquivo(Integer indice){
+		
+		listaProdutos.remove(indice);
+		
+		//checa o que acontece
+		for(Produto produto : listaProdutos){
+			System.out.println(produto.toString());
+		}
+		
+		try {
+			
+			File arquivo = new File("produtos.txt");
+			arquivo.delete();
+			
+			//não precisa ser extensão válida
+			FileWriter fw = new FileWriter("produtos.txt", true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			
+			
+			String linha = txtNome.getText()+","+txtQtde.getText() + "," + txtValor.getText() + "\n";
+				
+			
+			bw.append(linha);
+			
+			//é necessário fechar na sequencia que foram abertos FileWriter e BufferedWriter
+			bw.close();
+			fw.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	
