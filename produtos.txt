@@ -1,5 +1,3 @@
-,,
-tiago,21,22
-tiago,21,22
-tasfa,,
-tasfa,2,2
+a,1,1
+b,1,1
+c,1,1

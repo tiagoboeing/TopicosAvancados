@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import poo.atividadelivraria.Livro;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -31,7 +33,7 @@ public class Cadastro1 extends Shell {
 	private Table tabelaLista;
 	private Text txtValorTotal;
 	
-	ArrayList<Produto> listaProdutos = new ArrayList<Produto>();
+	static ArrayList<Produto> listaProdutos = new ArrayList<Produto>();
 
 	/**
 	 * Launch the application.
@@ -86,7 +88,7 @@ public class Cadastro1 extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {	
 				insereLinha();
-				leArquivo();
+				leArquivo(false, null);
 			}
 		});
 		btnInserir.setBounds(207, 99, 75, 25);
@@ -101,15 +103,7 @@ public class Cadastro1 extends Shell {
 				try {
 					
 					int indiceTabela = tabelaLista.getSelectionIndex();
-					System.out.println(indiceTabela+"\n");
-					
-					atualizaArquivo(indiceTabela);
-					
-					
-					//checa o que acontece
-					/*for(Produto produto : listaProdutos){
-						System.out.println(produto.toString());
-					}*/
+					leArquivo(true, indiceTabela);
 					
 					
 				} catch (Exception e2) {
@@ -155,7 +149,8 @@ public class Cadastro1 extends Shell {
 		lblUnidades.setBounds(134, 62, 55, 15);
 		createContents();
 		
-		leArquivo();
+		
+		leArquivo(false, null);
 		
 		
 		/*for(Produto produto : listaProdutos){
@@ -205,9 +200,10 @@ public class Cadastro1 extends Shell {
 	
 	
 	//lê arquivos
-	private void leArquivo(){
+	private void leArquivo(Boolean atualiza, Integer indice){
 		
 		tabelaLista.setItemCount(0);
+		
 		
 		try {
 			
@@ -216,7 +212,7 @@ public class Cadastro1 extends Shell {
 			
 			String linha;
 			double total = 0;
-
+			
 			
 			//linha recebe br.readLine, e enquanto for diferente de nulo...
 			while((linha = br.readLine()) != null){
@@ -243,58 +239,104 @@ public class Cadastro1 extends Shell {
 				it.setText(3, subTotal + "");
 				
 				
-					//joga valores para o arraylist
-					Produto produto = new Produto(dados[0], dados[1], dados[2]);
-					listaProdutos.add(produto);
-					
-			}
+				//joga valores para o arraylist
+//				listaProdutos.removeAll(listaProdutos);
+				Produto produto = new Produto(dados[0], dados[1], dados[2]);
+				listaProdutos.add(produto);		
+						
+			} //fecha while
+			
+			
 			
 			txtValorTotal.setText(total + "");
 			
 			br.close();
 			fr.close();
 			
+			
+			
+			
+			// se for pra atualizar o arquivo
+			if(atualiza == true && indice != null){
+				
+				tabelaLista.setItemCount(0);
+				
+				//excluiArquivo("produtos.txt");
+//				copiaArrayList();
+				
+				listaProdutos.remove(indice);
+				
+				System.out.println(listaArray());
+
+				// método de criação de novo arquivo
+//				try {
+//					
+//					//não precisa ser extensão válida
+//					FileWriter fw = new FileWriter("produtos.txt", true);
+//					BufferedWriter bw = new BufferedWriter(fw);
+//					
+//					listaProdutos.remove(indice);
+//					
+
+//					
+//						
+//					bw.append(linha1);
+//					
+//					//é necessário fechar na sequencia que foram abertos FileWriter e BufferedWriter
+//					bw.close();
+//					fw.close();
+//					
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+				
+				
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	
+	
+	private void excluiArquivo(String nomeArquivo){
+		
+		File arquivo = new File(nomeArquivo);
+		//se arquivo for válido
+		if(arquivo.isFile()){
+			arquivo.delete();
+			System.out.println("excluiu arquivo!");
+		}
+		
+	}
+	
+	
+	private void copiaArrayList(){
+		
+		String linhas = "Após excluir \n";
+
+		for(Produto p : listaProdutos){
+			
+			linhas += p.getTxtNome() + "," + p.getTxtQtde() + "," + p.getTxtValor() + "\n";
+		}
+		
+		System.out.println(linhas);
+		
+		
+	}
+	
+	
+	static String listaArray(){
+        
+		String ret  = "Lista \n\n";
+                
+		for (Produto l : listaProdutos) {
+			ret += "Nome: "+l.getTxtNome()+" | Qtde: "+l.getTxtQtde()+" | Valor: "+l.getTxtValor()+"\n";
+		}
+                
+		return ret;
+	}
 	
 
-	private void atualizaArquivo(Integer indice){
-		
-		listaProdutos.remove(indice);
-		
-		//checa o que acontece
-		for(Produto produto : listaProdutos){
-			System.out.println(produto.toString());
-		}
-		
-		try {
-			
-			File arquivo = new File("produtos.txt");
-			arquivo.delete();
-			
-			//não precisa ser extensão válida
-			FileWriter fw = new FileWriter("produtos.txt", true);
-			BufferedWriter bw = new BufferedWriter(fw);
-			
-			
-			String linha = txtNome.getText()+","+txtQtde.getText() + "," + txtValor.getText() + "\n";
-				
-			
-			bw.append(linha);
-			
-			//é necessário fechar na sequencia que foram abertos FileWriter e BufferedWriter
-			bw.close();
-			fw.close();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	
 }

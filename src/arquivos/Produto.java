@@ -21,7 +21,7 @@ public class Produto {
 	}*/
 	
 	public String toString(){
-		return "Nome: " + getTxtNome() + " - Qtde: " + getTxtQtde() + " - Valor: R$ " + getTxtValor();
+		return getTxtNome() + "," + getTxtQtde() + "," + getTxtValor()+"\n";
 	}
 	
 	
