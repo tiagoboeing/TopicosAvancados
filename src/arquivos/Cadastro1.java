@@ -18,8 +18,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import poo.atividadelivraria.Livro;
-
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -88,7 +86,7 @@ public class Cadastro1 extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {	
 				insereLinha();
-				leArquivo(false, null);
+				leArquivo();
 			}
 		});
 		btnInserir.setBounds(207, 99, 75, 25);
@@ -98,17 +96,17 @@ public class Cadastro1 extends Shell {
 		tabelaLista.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				
-				//criar método excluir
-				try {
+
 					
 					int indiceTabela = tabelaLista.getSelectionIndex();
-					leArquivo(true, indiceTabela);
+					listaProdutos.remove(indiceTabela);
 					
 					
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
+					arrayParaArquivo();
+					leArquivo();
+					
+					System.out.println(listaProdutos);
+
 				
 			}
 		});
@@ -158,7 +156,7 @@ public class Cadastro1 extends Shell {
 					
 			
 				int indiceTabela = tabelaLista.getSelectionIndex();
-				leArquivo(true, indiceTabela);
+				leArquivo();
 				System.out.println(listaProdutos.size());
 				
 				listaProdutos.remove(indiceTabela);
@@ -190,7 +188,10 @@ public class Cadastro1 extends Shell {
 		createContents();
 		
 		
-		leArquivo(false, null);
+		copiaArrayList();
+		arrayParaArquivo();
+		leArquivo();
+		
 		
 		
 		/*for(Produto produto : listaProdutos){
@@ -225,13 +226,17 @@ public class Cadastro1 extends Shell {
 			BufferedWriter bw = new BufferedWriter(fw);
 			
 			String linha = txtNome.getText()+","+txtQtde.getText() + "," + txtValor.getText() + "\n";
-				
 			
 			bw.append(linha);
 			
 			//é necessário fechar na sequencia que foram abertos FileWriter e BufferedWriter
 			bw.close();
 			fw.close();
+			
+			
+		Produto produto = new Produto(txtNome.getText(), txtQtde.getText(), txtValor.getText());
+		listaProdutos.add(produto);
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -240,7 +245,7 @@ public class Cadastro1 extends Shell {
 	
 	
 	//lê arquivos
-	private void leArquivo(Boolean atualiza, Integer indice){
+	private void leArquivo(){
 		
 		tabelaLista.setItemCount(0);
 		
@@ -277,11 +282,7 @@ public class Cadastro1 extends Shell {
 				
 				//SUBTOTAL
 				it.setText(3, subTotal + "");
-				
-				
-				//joga valores para o arraylist
-//				listaProdutos.removeAll(listaProdutos);
-				
+					
 						
 			} //fecha while
 			
@@ -296,16 +297,16 @@ public class Cadastro1 extends Shell {
 			
 			
 			// se for pra atualizar o arquivo
-			if(atualiza == true && indice != null){
-				
-				tabelaLista.setItemCount(0);
-				
-				//excluiArquivo("produtos.txt");
-//				copiaArrayList();
-				
-				listaProdutos.remove(indice);
-				
-				System.out.println(listaArray());
+//			if(atualiza == true && indice != null){
+//				
+//				tabelaLista.setItemCount(0);
+//				
+//				//excluiArquivo("produtos.txt");
+////				copiaArrayList();
+//				
+//				listaProdutos.remove(indice);
+//				
+//				System.out.println(listaArray());
 
 				// método de criação de novo arquivo
 //				try {
@@ -330,7 +331,7 @@ public class Cadastro1 extends Shell {
 //				}
 				
 				
-			}
+//			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -338,7 +339,7 @@ public class Cadastro1 extends Shell {
 	}
 	
 	
-	private void excluiArquivo(String nomeArquivo){
+	private static void excluiArquivo(String nomeArquivo){
 		
 		File arquivo = new File(nomeArquivo);
 		//se arquivo for válido
@@ -350,39 +351,39 @@ public class Cadastro1 extends Shell {
 	}
 	
 	
+	//passa valores do arquivo para arraylist
 	private void copiaArrayList(){
-		
-		
-		
-		
-		FileReader fr = new FileReader("produtos.txt");
-		BufferedReader br = new BufferedReader(fr);
-		
-		String linha;
-		double total = 0;
-		
-		
-		//linha recebe br.readLine, e enquanto for diferente de nulo...
-		while((linha = br.readLine()) != null){
 			
-			Produto produto = new Produto(dados[0], dados[1], dados[2]);
-			listaProdutos.add(produto);	
+		try {
+		
+			FileReader fr = new FileReader("produtos.txt");
+			BufferedReader br = new BufferedReader(fr);
 			
+			String linha;
+			
+			
+			//linha recebe br.readLine, e enquanto for diferente de nulo...
+			while((linha = br.readLine()) != null){
+				
+				//split gera um vetor de string de acordo com separado, parecido com explode, implode no PHP
+				String[] dados = linha.split(",");
+				
+				Produto produto = new Produto(dados[0], dados[1], dados[2]);
+				listaProdutos.add(produto);	
+				
+			}
+				
+			br.close();
+			fr.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-			
-//		String linhas = "Após excluir \n";
-//
-//		for(Produto p : listaProdutos){
-//			
-//			linhas += p.getTxtNome() + "," + p.getTxtQtde() + "," + p.getTxtValor() + "\n";
-//		}
-//		
-//		System.out.println(linhas);
-		
+
 		
 	}
 	
-	
+	//apenas para debug
 	static String listaArray(){
         
 		String ret  = "Lista \n\n";
@@ -393,4 +394,40 @@ public class Cadastro1 extends Shell {
                 
 		return ret;
 	}
+	
+	
+	static void arrayParaArquivo(){
+		
+		excluiArquivo("produtos.txt");
+		
+		String ret  = "";
+		
+		try {
+			
+			
+			//não precisa ser extensão válida
+			FileWriter fw = new FileWriter("produtos.txt", true);
+			BufferedWriter bw = new BufferedWriter(fw);
+		
+        
+			for (Produto l : listaProdutos) {
+				ret += l.getTxtNome()+","+l.getTxtQtde()+","+l.getTxtValor()+"\n";
+			}
+			
+			bw.append(ret);
+			
+			
+			//é necessário fechar na sequencia que foram abertos FileWriter e BufferedWriter
+			bw.close();
+			fw.close();
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+		
+	}
+	
 }
