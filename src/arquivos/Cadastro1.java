@@ -147,6 +147,46 @@ public class Cadastro1 extends Shell {
 		Label lblUnidades = new Label(this, SWT.NONE);
 		lblUnidades.setText("unidades");
 		lblUnidades.setBounds(134, 62, 55, 15);
+		
+		Button btnNewButton = new Button(this, SWT.NONE);
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				
+				try {
+					
+			
+				int indiceTabela = tabelaLista.getSelectionIndex();
+				leArquivo(true, indiceTabela);
+				System.out.println(listaProdutos.size());
+				
+				listaProdutos.remove(indiceTabela);
+				
+				System.out.println(listaProdutos.size());
+				
+				//não precisa ser extensão válida
+				FileWriter fw = new FileWriter("produtos.txt", false);
+				BufferedWriter bw = new BufferedWriter(fw);
+				
+				
+				for(Produto p : listaProdutos){
+					bw.append(p.getTxtNome()+","+p.getTxtQtde()+","+p.getTxtValor()+"\n");
+				}
+				
+				
+//				//é necessário fechar na sequencia que foram abertos FileWriter e BufferedWriter
+				bw.close();
+				fw.close();
+			
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+				
+			}
+		});
+		btnNewButton.setBounds(10, 383, 75, 25);
+		btnNewButton.setText("New Button");
 		createContents();
 		
 		
@@ -241,8 +281,7 @@ public class Cadastro1 extends Shell {
 				
 				//joga valores para o arraylist
 //				listaProdutos.removeAll(listaProdutos);
-				Produto produto = new Produto(dados[0], dados[1], dados[2]);
-				listaProdutos.add(produto);		
+				
 						
 			} //fecha while
 			
@@ -299,7 +338,6 @@ public class Cadastro1 extends Shell {
 	}
 	
 	
-	
 	private void excluiArquivo(String nomeArquivo){
 		
 		File arquivo = new File(nomeArquivo);
@@ -314,14 +352,32 @@ public class Cadastro1 extends Shell {
 	
 	private void copiaArrayList(){
 		
-		String linhas = "Após excluir \n";
-
-		for(Produto p : listaProdutos){
-			
-			linhas += p.getTxtNome() + "," + p.getTxtQtde() + "," + p.getTxtValor() + "\n";
-		}
 		
-		System.out.println(linhas);
+		
+		
+		FileReader fr = new FileReader("produtos.txt");
+		BufferedReader br = new BufferedReader(fr);
+		
+		String linha;
+		double total = 0;
+		
+		
+		//linha recebe br.readLine, e enquanto for diferente de nulo...
+		while((linha = br.readLine()) != null){
+			
+			Produto produto = new Produto(dados[0], dados[1], dados[2]);
+			listaProdutos.add(produto);	
+			
+		}
+			
+//		String linhas = "Após excluir \n";
+//
+//		for(Produto p : listaProdutos){
+//			
+//			linhas += p.getTxtNome() + "," + p.getTxtQtde() + "," + p.getTxtValor() + "\n";
+//		}
+//		
+//		System.out.println(linhas);
 		
 		
 	}
@@ -337,6 +393,4 @@ public class Cadastro1 extends Shell {
                 
 		return ret;
 	}
-	
-
 }
