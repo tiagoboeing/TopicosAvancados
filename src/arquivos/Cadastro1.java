@@ -145,46 +145,6 @@ public class Cadastro1 extends Shell {
 		Label lblUnidades = new Label(this, SWT.NONE);
 		lblUnidades.setText("unidades");
 		lblUnidades.setBounds(134, 62, 55, 15);
-		
-		Button btnNewButton = new Button(this, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				
-				
-				try {
-					
-			
-				int indiceTabela = tabelaLista.getSelectionIndex();
-				leArquivo();
-				System.out.println(listaProdutos.size());
-				
-				listaProdutos.remove(indiceTabela);
-				
-				System.out.println(listaProdutos.size());
-				
-				//não precisa ser extensão válida
-				FileWriter fw = new FileWriter("produtos.txt", false);
-				BufferedWriter bw = new BufferedWriter(fw);
-				
-				
-				for(Produto p : listaProdutos){
-					bw.append(p.getTxtNome()+","+p.getTxtQtde()+","+p.getTxtValor()+"\n");
-				}
-				
-				
-//				//é necessário fechar na sequencia que foram abertos FileWriter e BufferedWriter
-				bw.close();
-				fw.close();
-			
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-				
-			}
-		});
-		btnNewButton.setBounds(10, 383, 75, 25);
-		btnNewButton.setText("New Button");
 		createContents();
 		
 		
@@ -345,7 +305,8 @@ public class Cadastro1 extends Shell {
 		//se arquivo for válido
 		if(arquivo.isFile()){
 			arquivo.delete();
-			System.out.println("excluiu arquivo!");
+			
+//			System.out.println("excluiu arquivo!");
 		}
 		
 	}
