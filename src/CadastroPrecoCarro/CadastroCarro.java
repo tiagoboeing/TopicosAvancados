@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -13,6 +14,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.wb.swt.SWTResourceManager;
+
+import arquivos.Produto;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
@@ -26,7 +30,9 @@ public class CadastroCarro extends Shell {
 	private Text txtPlacaMulta;
 	private Text txtValorMulta;
 	private Text txtBuscaMultas;
-	private Text txtValorTotal;
+	private Text txtValorMultasSomadas;
+	
+	static ArrayList<Multa> listaMultas = new ArrayList<Multa>();
 
 	/**
 	 * Launch the application.
@@ -202,6 +208,12 @@ public class CadastroCarro extends Shell {
 					String linha = "M" + formataPlaca(txtPlacaMulta.getText()) + formataValor(txtValorMulta.getText()) + "\n";
 
 					bw.append(linha);
+					
+					
+						// joga para o Arraylist sempre que houver novo cadastro
+						Multa m = new Multa(formataPlaca(txtPlacaMulta.getText()), Double.parseDouble(txtValorMulta.getText()));
+						listaMultas.add(m);
+						
 
 					bw.close();
 					fw.close();
@@ -227,64 +239,32 @@ public class CadastroCarro extends Shell {
 		txtBuscaMultas = new Text(grpBuscarTotalDe, SWT.BORDER);
 		txtBuscaMultas.setBounds(57, 41, 113, 21);
 		
-		Button btnTotalDeMiltas = new Button(grpBuscarTotalDe, SWT.NONE);
-		btnTotalDeMiltas.addSelectionListener(new SelectionAdapter() {
+		Button btnTotalDeMultas = new Button(grpBuscarTotalDe, SWT.NONE);
+		btnTotalDeMultas.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				
-				try {
-					FileReader fr = new FileReader("carros.car");
-					BufferedReader br = new BufferedReader(fr);
-					
-					String linha = "";
-					String totalMulta = "";
-					
-					while ((linha = br.readLine()) != null) {
-						
-						String tipo = linha.substring(0, 1);
-						String placaCarro = linha.substring(1, 8);
-						String placaBuscar = txtBuscaMultas.getText();
-						
-						
-						if (tipo.equalsIgnoreCase("M") && placaBuscar.equalsIgnoreCase(placaCarro)){
-							
-							//System.out.println("passou m");
-							
-							String valorMulta = reverteValorSemFormatacao(linha.substring(8, 16));
-							
-							Double soma = Double.parseDouble(valorMulta);
-							
-							System.out.println(soma);
-							
-							
-						}
-
-					}
-					
-					
-					
-					br.close();
-					fr.close();
-				} catch (Exception e2) {
-					// TODO: handle exception
-					e2.printStackTrace();
-				}
+				preencheArrayComMultas(txtBuscaMultas.getText());
+				txtValorMultasSomadas.setText("R$ "+calculaTotalMultas(txtBuscaMultas.getText()));
 				
 			}
 		});
-		btnTotalDeMiltas.setText("Total de multas");
-		btnTotalDeMiltas.setBounds(178, 39, 99, 25);
+		btnTotalDeMultas.setText("Total de multas");
+		btnTotalDeMultas.setBounds(178, 39, 99, 25);
 		
 		Group grpTotalDeMultas = new Group(this, SWT.NONE);
 		grpTotalDeMultas.setText("TOTAL DE MULTAS");
 		grpTotalDeMultas.setBounds(337, 146, 291, 258);
 		
-		txtValorTotal = new Text(grpTotalDeMultas, SWT.BORDER);
-		txtValorTotal.setEditable(false);
-		txtValorTotal.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
-		txtValorTotal.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.NORMAL));
-		txtValorTotal.setBounds(23, 51, 245, 107);
+		txtValorMultasSomadas = new Text(grpTotalDeMultas, SWT.BORDER | SWT.CENTER);
+		txtValorMultasSomadas.setEditable(false);
+		txtValorMultasSomadas.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+		txtValorMultasSomadas.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.NORMAL));
+		txtValorMultasSomadas.setBounds(23, 51, 245, 71);
+		
+		Label lblValorTotalDe = new Label(grpTotalDeMultas, SWT.NONE);
+		lblValorTotalDe.setBounds(24, 31, 174, 15);
+		lblValorTotalDe.setText("Valor total de multas para o carro");
 		createContents();
 	}
 
@@ -382,4 +362,76 @@ public class CadastroCarro extends Shell {
 //	}
 	
 	
+	private void preencheArrayComMultas(String placa){
+		
+		//limpa array caso hajam dados anteriores
+		listaMultas.clear();
+		
+		try {
+			
+			FileReader fr = new FileReader("carros.car");
+			BufferedReader br = new BufferedReader(fr);
+			
+			String linha = "";
+			String placaBuscar = formataPlaca(placa);
+			
+			
+			while ((linha = br.readLine()) != null) {
+				
+				String tipo = linha.substring(0, 1);
+				String placaCarro = linha.substring(1, 8).trim();
+				
+				//confere se é tipo MULTA e PLACA do carro buscada
+				if (tipo.equalsIgnoreCase("M") && placaCarro.equalsIgnoreCase(placaBuscar)){
+		
+					// se passar no if(), pega os valores da multa
+					Double valorMulta = Double.parseDouble(linha.substring(8, 16).trim());
+					
+						//joga pra arraylist depois de varrer arquivo
+						Multa m = new Multa(placaBuscar, valorMulta);
+						listaMultas.add(m);
+					
+				}
+				
+			} // fecha while
+			
+			
+			
+			br.close();
+			fr.close();
+			
+		} catch (Exception e2) {
+			// TODO: handle exception
+			e2.printStackTrace();
+		}
+		
+		
+//		System.out.println(listaMultas.toString());
+		
+	}
+	
+	
+	private Double calculaTotalMultas(String placa){
+		
+		String placaBuscar = formataPlaca(placa);
+		Double saldoDevedor = 0.0;
+		
+		//varre arraylist
+		for(Multa m : listaMultas){
+			
+			//verifica a placa novamente, apenas por segurança
+			if(m.getPlacaCarro().equalsIgnoreCase(placaBuscar)){				
+				//assim funciona - gambiarra
+				saldoDevedor += (m.getValorMulta() + m.getValorMulta())/2;
+			}
+			
+		}
+		
+//		System.out.println(listaMultas.toString());
+//		System.out.println(saldoDevedor);
+		
+		return saldoDevedor;
+	
+		
+	}
 }
