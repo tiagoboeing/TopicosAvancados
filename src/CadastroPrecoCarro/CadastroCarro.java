@@ -244,15 +244,18 @@ public class CadastroCarro extends Shell {
 						
 						String tipo = linha.substring(0, 1);
 						String placaCarro = linha.substring(1, 8);
+						String placaBuscar = txtBuscaMultas.getText();
 						
 						
-						if (tipo.equalsIgnoreCase("M")){
+						if (tipo.equalsIgnoreCase("M") && placaBuscar.equalsIgnoreCase(placaCarro)){
 							
-							System.out.println("passou m");
+							//System.out.println("passou m");
 							
-							String valorMulta = linha.substring(8, 16);
+							String valorMulta = reverteValorSemFormatacao(linha.substring(8, 16));
 							
-							System.out.println(valorMulta);
+							Double soma = Double.parseDouble(valorMulta);
+							
+							System.out.println(soma);
 							
 							
 						}
@@ -260,7 +263,6 @@ public class CadastroCarro extends Shell {
 					}
 					
 					
-					txtValorTotal.setText(totalMulta);
 					
 					br.close();
 					fr.close();
@@ -318,6 +320,18 @@ public class CadastroCarro extends Shell {
 		}
 		
 		return s1+","+s2;
+	}
+	
+	
+	private String reverteValorSemFormatacao(String s){
+		String s1 = s.substring(0,6);
+		String s2 = s.substring(6);
+		
+		while(s1.charAt(0) == '0'){
+			s1 = s1.substring(1);
+		}
+		
+		return s1+s2;
 	}
 	
 	
