@@ -190,6 +190,29 @@ public class CadastroCarro extends Shell {
 		txtValorMulta.setBounds(69, 68, 113, 21);
 		
 		Button btnSalvarMulta = new Button(grpMulta, SWT.NONE);
+		btnSalvarMulta.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				try {
+
+					FileWriter fw = new FileWriter("carros.car", true);
+					BufferedWriter bw = new BufferedWriter(fw);
+
+					String linha = "M" + formataPlaca(txtPlacaMulta.getText()) + formataValor(txtValorMulta.getText()) + "\n";
+
+					bw.append(linha);
+
+					bw.close();
+					fw.close();
+
+				} catch (Exception e2) {
+					// TODO: handle exception
+					e2.printStackTrace();
+				}
+				
+			}
+		});
 		btnSalvarMulta.setBounds(201, 66, 75, 25);
 		btnSalvarMulta.setText("Salvar");
 		
@@ -205,6 +228,49 @@ public class CadastroCarro extends Shell {
 		txtBuscaMultas.setBounds(57, 41, 113, 21);
 		
 		Button btnTotalDeMiltas = new Button(grpBuscarTotalDe, SWT.NONE);
+		btnTotalDeMiltas.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				
+				try {
+					FileReader fr = new FileReader("carros.car");
+					BufferedReader br = new BufferedReader(fr);
+					
+					String linha = "";
+					String totalMulta = "";
+					
+					while ((linha = br.readLine()) != null) {
+						
+						String tipo = linha.substring(0, 1);
+						String placaCarro = linha.substring(1, 8);
+						
+						
+						if (tipo.equalsIgnoreCase("M")){
+							
+							System.out.println("passou m");
+							
+							String valorMulta = linha.substring(8, 16);
+							
+							System.out.println(valorMulta);
+							
+							
+						}
+
+					}
+					
+					
+					txtValorTotal.setText(totalMulta);
+					
+					br.close();
+					fr.close();
+				} catch (Exception e2) {
+					// TODO: handle exception
+					e2.printStackTrace();
+				}
+				
+			}
+		});
 		btnTotalDeMiltas.setText("Total de multas");
 		btnTotalDeMiltas.setBounds(178, 39, 99, 25);
 		
@@ -256,9 +322,12 @@ public class CadastroCarro extends Shell {
 	
 	
 	private String formataPlaca(String s){
-		s = s.replace(".", "");
-		s = s.replace(",", "");		
-		s = completaComZeros(s, 8);
+//		s = s.replace(".", "");
+//		s = s.replace(",", "");		
+//		s = completaComZeros(s, 8);
+		
+		s = s.replace("-", "");
+		
 		return s;
 	}
 	
@@ -268,22 +337,35 @@ public class CadastroCarro extends Shell {
 		if(s.length() < tam){
 			int qt = tam-s.length();
 			for(int i = 0; i < qt; i++){
-				s += 0+s;
+				s = "0" + s;
 			}
 		}
 		return s;
 	}
 	
+
 	
-	
-	private String completaComEspacos(String s, int tam){
-		if(s.length() < tam){
-			for(int i=0; i<tam-s.length(); i++){
+	private String completaComEspacos(String s, int tam) {
+
+		if (s.length() < tam) {
+
+			int qt = tam - s.length();
+
+			for (int i = 0; i < qt; i++)
 				s += " ";
-			}
+
 		}
 		return s;
 	}
+	
+//	private String completaComEspacos(String s, int tam){
+//		if(s.length() < tam){
+//			for(int i=0; i<tam-s.length(); i++){
+//				s += " ";
+//			}
+//		}
+//		return s;
+//	}
 	
 	
 }
