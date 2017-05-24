@@ -15,10 +15,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import arquivos.Produto;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 public class CadastroCarro extends Shell {
 	private Text txtPlaca;
@@ -33,6 +35,9 @@ public class CadastroCarro extends Shell {
 	private Text txtValorMultasSomadas;
 	
 	static ArrayList<Multa> listaMultas = new ArrayList<Multa>();
+	static ArrayList<Carro> listaCarros = new ArrayList<Carro>();
+	
+	private Table tabelaCarros;
 
 	/**
 	 * Launch the application.
@@ -162,6 +167,28 @@ public class CadastroCarro extends Shell {
 							completaComEspacos(txtCor.getText(), 10) + 
 							formataValor(txtValor.getText()) + "\n";
 					
+					
+					TableItem it = new TableItem(tabelaCarros, SWT.NONE);
+					
+					//PLACA
+					it.setText(0, formataPlaca(txtPlaca.getText()));
+					
+					//marca
+					it.setText(1, txtMarca.getText());
+					
+					//modelo
+					it.setText(2, txtModelo.getText());
+					
+					//ano
+					it.setText(3, txtAno.getText());
+					
+					//cor
+					it.setText(4, txtCor.getText());
+					
+					//valor
+					it.setText(5, reverteValor(formataValor(txtValor.getText())));
+					
+					
 					bw.append(linha);
 					
 					bw.close();
@@ -265,7 +292,62 @@ public class CadastroCarro extends Shell {
 		Label lblValorTotalDe = new Label(grpTotalDeMultas, SWT.NONE);
 		lblValorTotalDe.setBounds(24, 31, 174, 15);
 		lblValorTotalDe.setText("Valor total de multas para o carro");
+		
+		tabelaCarros = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
+		tabelaCarros.setBounds(650, 21, 598, 383);
+		tabelaCarros.setHeaderVisible(true);
+		tabelaCarros.setLinesVisible(true);
+		
+		TableColumn tblclmnPlaca = new TableColumn(tabelaCarros, SWT.NONE);
+		tblclmnPlaca.setWidth(100);
+		tblclmnPlaca.setText("Placa");
+		
+		TableColumn tblclmnMarca = new TableColumn(tabelaCarros, SWT.NONE);
+		tblclmnMarca.setWidth(100);
+		tblclmnMarca.setText("Marca");
+		
+		TableColumn tblclmnModelo = new TableColumn(tabelaCarros, SWT.NONE);
+		tblclmnModelo.setWidth(100);
+		tblclmnModelo.setText("Modelo");
+		
+		TableColumn tblclmnAno = new TableColumn(tabelaCarros, SWT.NONE);
+		tblclmnAno.setWidth(71);
+		tblclmnAno.setText("Ano");
+		
+		TableColumn tblclmnCor = new TableColumn(tabelaCarros, SWT.NONE);
+		tblclmnCor.setWidth(100);
+		tblclmnCor.setText("Cor");
+		
+		TableColumn tblclmnValor = new TableColumn(tabelaCarros, SWT.NONE);
+		tblclmnValor.setWidth(100);
+		tblclmnValor.setText("Valor");
+		
+		Button btnAlterar = new Button(this, SWT.NONE);
+		btnAlterar.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				//pega lista selecionada
+				int indiceTabela = tabelaCarros.getSelectionIndex();
+				
+				
+				txtPlaca.setText((listaCarros.get(indiceTabela).txtPlaca));
+				txtMarca.setText((listaCarros.get(indiceTabela).txtMarca));
+				txtModelo.setText((listaCarros.get(indiceTabela).txtModelo));
+				txtAno.setText((listaCarros.get(indiceTabela).txtAno));
+				txtCor.setText((listaCarros.get(indiceTabela).txtCor));
+				txtValor.setText((listaCarros.get(indiceTabela).txtValor));
+	
+				
+			}
+		});
+		btnAlterar.setBounds(650, 410, 75, 25);
+		btnAlterar.setText("Alterar");
 		createContents();
+		
+		
+		preencheArrayComCarros();
+		
 	}
 
 	/**
@@ -273,7 +355,7 @@ public class CadastroCarro extends Shell {
 	 */
 	protected void createContents() {
 		setText("SWT Application");
-		setSize(671, 478);
+		setSize(1288, 504);
 
 	}
 
@@ -390,6 +472,8 @@ public class CadastroCarro extends Shell {
 						//joga pra arraylist depois de varrer arquivo
 						Multa m = new Multa(placaBuscar, valorMulta);
 						listaMultas.add(m);
+						
+						
 					
 				}
 				
@@ -409,6 +493,87 @@ public class CadastroCarro extends Shell {
 //		System.out.println(listaMultas.toString());
 		
 	}
+	
+	
+	
+
+	private void preencheArrayComCarros(){
+		
+		//limpa array caso hajam dados anteriores
+		listaCarros.clear();
+		
+		
+		try {
+			FileReader fr = new FileReader("carros.car");
+			BufferedReader br = new BufferedReader(fr);
+			
+			String linha = "";
+			while((linha = br.readLine()) != null){
+				
+				if(linha.substring(0, 1).equalsIgnoreCase("C")){
+					
+					String placa = linha.substring(1, 8).trim();
+					String marca = linha.substring(8,28).trim();
+					String modelo = linha.substring(28,48).trim();
+					String ano = linha.substring(48,52).trim();
+					String cor = linha.substring(52,62).trim();
+					String valor = reverteValor(linha.substring(62).trim());
+					
+					
+					Carro c = new Carro(placa, marca, modelo, ano, cor, valor);
+					listaCarros.add(c);
+					
+//					System.out.println(listaCarros);
+					
+				}
+				
+			}
+			
+			
+			br.close();
+			fr.close();
+			
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+		
+		
+		
+		//limpa tabela caso haja algo
+		tabelaCarros.setItemCount(0);
+		
+		//passando valores do array para a tabela
+		for(Carro c : listaCarros){
+			
+			TableItem it = new TableItem(tabelaCarros, SWT.NONE);
+			
+			//placa
+			it.setText(0, c.txtPlaca);
+			
+			//marca
+			it.setText(1, c.txtMarca);
+			
+			//modelo
+			it.setText(2, c.txtModelo);
+			
+			//ano
+			it.setText(3, c.txtAno);
+			
+			//cor
+			it.setText(4, c.txtCor);
+			
+			//valor
+			it.setText(5, c.txtValor);
+			
+		}
+		
+		
+//		System.out.println(listaMultas.toString());
+		
+	}
+	
+	
+	
 	
 	
 	private Double calculaTotalMultas(String placa){
