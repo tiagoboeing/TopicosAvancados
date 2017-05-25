@@ -2,6 +2,7 @@ package CadastroPrecoCarro;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 
 public class CadastroCarro extends Shell {
 	private Text txtPlaca;
@@ -34,10 +37,13 @@ public class CadastroCarro extends Shell {
 	private Text txtBuscaMultas;
 	private Text txtValorMultasSomadas;
 	
+	public String guardaIndice;
+	
 	static ArrayList<Multa> listaMultas = new ArrayList<Multa>();
 	static ArrayList<Carro> listaCarros = new ArrayList<Carro>();
 	
 	private Table tabelaCarros;
+	private Button btnAlterar;
 
 	/**
 	 * Launch the application.
@@ -156,6 +162,17 @@ public class CadastroCarro extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
+				
+				if(guardaIndice != null){
+					//remove campo a editar
+					listaCarros.remove(Integer.parseInt(guardaIndice));
+					
+					//remove da tabela
+					tabelaCarros.remove(Integer.parseInt(guardaIndice));
+				}
+
+				
+				
 				try {
 					FileWriter fw = new FileWriter("carros.car", true);
 					BufferedWriter bw = new BufferedWriter(fw);
@@ -189,6 +206,11 @@ public class CadastroCarro extends Shell {
 					it.setText(5, reverteValor(formataValor(txtValor.getText())));
 					
 					
+						//adiciona o que for salvo ou editado ao array
+						Carro c = new Carro(formataPlaca(txtPlaca.getText()), txtMarca.getText(), txtModelo.getText(), txtAno.getText(), txtCor.getText(), reverteValor(formataValor(txtValor.getText())));
+						listaCarros.add(c);
+					
+					
 					bw.append(linha);
 					
 					bw.close();
@@ -197,6 +219,13 @@ public class CadastroCarro extends Shell {
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
+				
+				
+				System.out.println("segundo passo \n ---------- \n");
+				System.out.println(listaCarros.toString());
+				
+				
+				varreArrayeJogaParaArquivo();
 				
 				
 			}
@@ -294,6 +323,22 @@ public class CadastroCarro extends Shell {
 		lblValorTotalDe.setText("Valor total de multas para o carro");
 		
 		tabelaCarros = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
+		tabelaCarros.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				
+				Integer linhaTabela = tabelaCarros.getSelectionIndex();
+				
+				//remove linha do array
+				listaCarros.remove(Integer.parseInt(linhaTabela+""));
+				
+				//remove da tabela
+				tabelaCarros.remove(linhaTabela);
+				
+				varreArrayeJogaParaArquivo();
+				
+			}
+		});
 		tabelaCarros.setBounds(650, 21, 598, 383);
 		tabelaCarros.setHeaderVisible(true);
 		tabelaCarros.setLinesVisible(true);
@@ -322,14 +367,15 @@ public class CadastroCarro extends Shell {
 		tblclmnValor.setWidth(100);
 		tblclmnValor.setText("Valor");
 		
-		Button btnAlterar = new Button(this, SWT.NONE);
+		btnAlterar = new Button(this, SWT.NONE);
 		btnAlterar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
 				//pega lista selecionada
 				int indiceTabela = tabelaCarros.getSelectionIndex();
-				
+				guardaIndice = indiceTabela+"";
+
 				
 				txtPlaca.setText((listaCarros.get(indiceTabela).txtPlaca));
 				txtMarca.setText((listaCarros.get(indiceTabela).txtMarca));
@@ -566,12 +612,9 @@ public class CadastroCarro extends Shell {
 			it.setText(5, c.txtValor);
 			
 		}
-		
-		
-//		System.out.println(listaMultas.toString());
+
 		
 	}
-	
 	
 	
 	
@@ -599,4 +642,69 @@ public class CadastroCarro extends Shell {
 	
 		
 	}
+	
+	
+	
+	private void varreArrayeJogaParaArquivo(){
+		
+		//remove arquivo antes de qualquer coisa
+		excluiArquivo("carros.car");
+		
+		//limpa tabela por segurança
+//		tabelaCarros.setItemCount(0);
+		
+		
+		//varre o arraylist
+		for(Carro c : listaCarros){			
+			
+			//escreve dados para o arquivo
+			try {
+				
+				FileWriter fw = new FileWriter("carros.car", true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				
+				String linha  = "C" + formataPlaca(c.txtPlaca) + 
+						completaComEspacos(c.txtMarca, 20) + 
+						completaComEspacos(c.txtModelo, 20) + 
+						c.txtAno + 
+						completaComEspacos(c.txtCor, 10) + 
+						formataValor(c.txtValor) + "\n";
+				
+				
+				
+				bw.append(linha);
+				
+				bw.close();
+				fw.close();
+				
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+			
+			
+			
+		}
+		
+		
+	}
+	
+	
+	
+	//EXCLUI UM ARQUIVO QUALQUER
+	private static void excluiArquivo(String nomeArquivo){
+		
+		File arquivo = new File(nomeArquivo);
+		//se arquivo for válido
+		if(arquivo.isFile()){
+			arquivo.delete();
+			
+//			System.out.println("excluiu arquivo!");
+		}
+		
+	}
+	
+	
+	
+	
+	
 }

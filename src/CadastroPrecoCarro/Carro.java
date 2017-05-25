@@ -17,7 +17,7 @@ public class Carro {
 	
 	
 	public String toString(){
-		return getTxtPlaca() + " - " + getTxtMarca() + " - " + getTxtModelo() + " - " + getTxtAno() + " - " + getTxtCor() + " - " + getTxtValor();
+		return getTxtPlaca() + " - " + getTxtMarca() + " - " + getTxtModelo() + " - " + getTxtAno() + " - " + getTxtCor() + " - " + getTxtValor() + "\n";
 	}
 
 
