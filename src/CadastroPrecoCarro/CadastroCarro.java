@@ -221,8 +221,8 @@ public class CadastroCarro extends Shell {
 				}
 				
 				
-				System.out.println("segundo passo \n ---------- \n");
-				System.out.println(listaCarros.toString());
+//				System.out.println("segundo passo \n ---------- \n");
+//				System.out.println(listaCarros.toString());
 				
 				
 				varreArrayeJogaParaArquivo();
