@@ -470,7 +470,8 @@ public class CadastroCarro extends Shell {
 		createContents();
 		
 		
-		preencheArrayComCarros();
+		preencheArrayComCarroseMultas();
+		
 		
 	}
 
@@ -621,7 +622,7 @@ public class CadastroCarro extends Shell {
 	
 	
 
-	private void preencheArrayComCarros(){
+	private void preencheArrayComCarroseMultas(){
 		
 		//limpa array caso hajam dados anteriores
 		listaCarros.clear();
@@ -634,6 +635,8 @@ public class CadastroCarro extends Shell {
 			String linha = "";
 			while((linha = br.readLine()) != null){
 				
+				
+				// BUSCA TIPO C = CARRO
 				if(linha.substring(0, 1).equalsIgnoreCase("C")){
 					
 					String placa = linha.substring(1, 8).trim();
@@ -647,9 +650,20 @@ public class CadastroCarro extends Shell {
 					Carro c = new Carro(placa, marca, modelo, ano, cor, valor);
 					listaCarros.add(c);
 					
-//					System.out.println(listaCarros);
+//					System.out.println(listaCarros);	
+				}
+				
+				
+				if(linha.substring(0, 1).equalsIgnoreCase("M")){
+					
+					String placaCarroMulta = linha.substring(1, 8).trim();
+					String valorMulta = (linha.substring(8, 16).trim());
+
+					Multa m = new Multa(placaCarroMulta, Double.parseDouble(valorMulta));
+					listaMultas.add(m);					
 					
 				}
+				
 				
 			}
 			
@@ -732,6 +746,14 @@ public class CadastroCarro extends Shell {
 //		tabelaCarros.setItemCount(0);
 		
 		
+		String linha1 = "";
+		//pega multas também
+		for(Multa m : listaMultas){
+			linha1 += "M" + formataPlaca(m.getPlacaCarro()) + formataValor(m.getValorMulta()+"") + "\n";
+		}
+		
+		System.out.println(listaMultas.toString());
+		
 		//varre o arraylist
 		for(Carro c : listaCarros){			
 			
@@ -749,8 +771,9 @@ public class CadastroCarro extends Shell {
 						formataValor(c.txtValor) + "\n";
 				
 				
-				
 				bw.append(linha);
+				bw.append(linha1);
+				
 				
 				bw.close();
 				fw.close();
@@ -758,10 +781,8 @@ public class CadastroCarro extends Shell {
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
-			
-			
-			
-		}
+				
+		} // fecha for do arraylist
 		
 		
 	}
