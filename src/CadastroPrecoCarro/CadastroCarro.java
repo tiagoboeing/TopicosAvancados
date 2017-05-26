@@ -300,8 +300,26 @@ public class CadastroCarro extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				preencheArrayComMultas(txtBuscaMultas.getText());
-				txtValorMultasSomadas.setText("R$ "+calculaTotalMultas(txtBuscaMultas.getText()));
+				//checa se há alguma linha selecionada
+				if(guardaIndice != null){
+					
+					String placaCarroSelecionado = listaCarros.get(Integer.parseInt(guardaIndice)).getTxtPlaca();
+					preencheArrayComMultas(placaCarroSelecionado);
+					
+					//mostra total de multas para usuário
+					txtValorMultasSomadas.setText("R$ "+calculaTotalMultas(placaCarroSelecionado));
+
+				} else {
+					
+					//executa operação por busca de placa - DIGITADO PELO USUÁRIO
+					if(txtBuscaMultas != null)
+					preencheArrayComMultas(txtBuscaMultas.getText());
+						
+					//grava na tela
+					txtValorMultasSomadas.setText("R$ "+calculaTotalMultas(txtBuscaMultas.getText()));
+					
+				}
+				
 				
 			}
 		});
@@ -323,6 +341,18 @@ public class CadastroCarro extends Shell {
 		lblValorTotalDe.setText("Valor total de multas para o carro");
 		
 		tabelaCarros = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
+		tabelaCarros.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				// ao selecionar qualquer linha
+				
+				//pega lista selecionada
+				int indiceTabela = tabelaCarros.getSelectionIndex();
+				guardaIndice = indiceTabela+"";
+				
+			}
+		});
 		tabelaCarros.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
