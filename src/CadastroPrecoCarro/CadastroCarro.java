@@ -44,6 +44,7 @@ public class CadastroCarro extends Shell {
 	
 	private Table tabelaCarros;
 	private Button btnAlterar;
+	private Table tabelaListaMultas;
 
 	/**
 	 * Launch the application.
@@ -300,6 +301,8 @@ public class CadastroCarro extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
+				tabelaListaMultas.setItemCount(0);
+				
 				//checa se há alguma linha selecionada
 				if(guardaIndice != null){
 					
@@ -308,6 +311,24 @@ public class CadastroCarro extends Shell {
 					
 					//mostra total de multas para usuário
 					txtValorMultasSomadas.setText("R$ "+calculaTotalMultas(placaCarroSelecionado));
+					txtBuscaMultas.setText(placaCarroSelecionado);
+					
+					Integer i = 0;
+					
+						//LISTA MULTAS INDIVIDUAIS
+						for(Multa m : listaMultas){
+							
+							//verifica a placa novamente, apenas por segurança
+							if(m.getPlacaCarro().equalsIgnoreCase(placaCarroSelecionado)){				
+								
+								i += i + 1;
+								TableItem it = new TableItem(tabelaListaMultas, SWT.NONE);
+
+								//placa
+								it.setText(0, "Multa ID=" + i + " no valor de R$: " + m.getValorMulta()+"");
+							}
+						}
+					
 
 				} else {
 					
@@ -317,6 +338,23 @@ public class CadastroCarro extends Shell {
 						
 					//grava na tela
 					txtValorMultasSomadas.setText("R$ "+calculaTotalMultas(txtBuscaMultas.getText()));
+					
+					Integer i = 0;
+					
+						//LISTA MULTAS INDIVIDUAIS
+						for(Multa m : listaMultas){
+							
+							//verifica a placa novamente, apenas por segurança
+							if(m.getPlacaCarro().equalsIgnoreCase(txtBuscaMultas.getText())){				
+								
+								i += i + 1;
+								TableItem it = new TableItem(tabelaListaMultas, SWT.NONE);
+
+								//placa
+								it.setText(0, "Multa ID=" + i + " no valor de R$: " + m.getValorMulta()+"");
+							}
+						}
+					
 					
 				}
 				
@@ -328,7 +366,7 @@ public class CadastroCarro extends Shell {
 		
 		Group grpTotalDeMultas = new Group(this, SWT.NONE);
 		grpTotalDeMultas.setText("TOTAL DE MULTAS");
-		grpTotalDeMultas.setBounds(337, 146, 291, 258);
+		grpTotalDeMultas.setBounds(337, 146, 291, 358);
 		
 		txtValorMultasSomadas = new Text(grpTotalDeMultas, SWT.BORDER | SWT.CENTER);
 		txtValorMultasSomadas.setEditable(false);
@@ -339,6 +377,16 @@ public class CadastroCarro extends Shell {
 		Label lblValorTotalDe = new Label(grpTotalDeMultas, SWT.NONE);
 		lblValorTotalDe.setBounds(24, 31, 174, 15);
 		lblValorTotalDe.setText("Valor total de multas para o carro");
+		
+		tabelaListaMultas = new Table(grpTotalDeMultas, SWT.BORDER | SWT.FULL_SELECTION);
+		tabelaListaMultas.setLinesVisible(true);
+		tabelaListaMultas.setHeaderVisible(true);
+		tabelaListaMultas.setBounds(26, 143, 242, 188);
+		
+		TableColumn tblclmnMulta = new TableColumn(tabelaListaMultas, SWT.NONE);
+		tblclmnMulta.setResizable(false);
+		tblclmnMulta.setWidth(237);
+		tblclmnMulta.setText("Valor R$");
 		
 		tabelaCarros = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
 		tabelaCarros.addSelectionListener(new SelectionAdapter() {
@@ -431,7 +479,7 @@ public class CadastroCarro extends Shell {
 	 */
 	protected void createContents() {
 		setText("SWT Application");
-		setSize(1288, 504);
+		setSize(1288, 564);
 
 	}
 
@@ -732,9 +780,4 @@ public class CadastroCarro extends Shell {
 		}
 		
 	}
-	
-	
-	
-	
-	
 }
