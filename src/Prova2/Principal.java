@@ -98,6 +98,8 @@ public class Principal extends Shell {
 		btnFeminino.setBounds(28, 77, 90, 16);
 		btnFeminino.setText("Feminino");
 		
+		
+		
 		Button btnCadastrar = new Button(grpCadastroDeCantores, SWT.NONE);
 		btnCadastrar.addSelectionListener(new SelectionAdapter() {
 			@Override
