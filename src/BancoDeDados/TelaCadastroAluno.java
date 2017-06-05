@@ -123,6 +123,8 @@ public class TelaCadastroAluno extends Composite {
 	private void preencheTabela(){
 		
 		listaAlunos = Aluno.listaTodos();
+		
+		//limpa tabela
 		tabelaAlunos.setItemCount(0);
 		
 		for(Aluno a : listaAlunos){
