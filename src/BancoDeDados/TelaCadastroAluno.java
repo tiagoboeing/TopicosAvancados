@@ -2,12 +2,11 @@ package BancoDeDados;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
+import org.eclipse.swt.widgets.MessageBox;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.DateTime;
@@ -22,8 +21,17 @@ public class TelaCadastroAluno extends Composite {
 	private Text text_1;
 	private Table tabelaAlunos;
 	private DateTime dataNasc;
+	private Button btnAlterar;
+	private Button btnSalvarAlteracoes;
+	
+	
+	private Integer editandoId;
+	public String guardaIndice;
+	
 	
 	private ArrayList<Aluno> listaAlunos = new ArrayList<Aluno>();
+	private Button btnExcluirTudo;
+	
 
 	/**
 	 * Create the composite.
@@ -78,11 +86,74 @@ public class TelaCadastroAluno extends Composite {
 		btnInserir.setBounds(10, 106, 75, 25);
 		btnInserir.setText("Inserir");
 		
-		Button btnAlterar = new Button(this, SWT.NONE);
+		btnAlterar = new Button(this, SWT.NONE);
+		btnAlterar.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				btnSalvarAlteracoes.setEnabled(true);
+				
+				try {
+										
+					/*
+					// pega lista selecionada
+					int indiceTabela = tabelaListaAluno.getSelectionIndex();
+					guardaIndice = indiceTabela + "";
+					txtNome.setText((listaAluno.get(indiceTabela).));
+					txtMarca.setText((listaCarros.get(indiceTabela).txtMarca));
+					*/
+					
+					int indiceTabela = tabelaAlunos.getSelectionIndex();
+					Integer idAluno = listaAlunos.get(indiceTabela).getIdAluno();
+					String nome = listaAlunos.get(indiceTabela).getNomeAluno();
+					String data = listaAlunos.get(indiceTabela).getDtBr();
+					
+					String[] dados = data.split("/");
+					Integer dia = Integer.parseInt(dados[0]);
+					Integer mes = Integer.parseInt(dados[1]);
+					Integer ano = Integer.parseInt(dados[2]);
+					
+
+					editandoId = idAluno;
+							
+					txtNomeAluno.setText(nome);
+					dataNasc.setDay(dia);
+					dataNasc.setMonth(mes-1);
+					dataNasc.setYear(ano);
+					
+					//falta setar a data, pois não esta puxando a correta
+					
+					preencheTabela();
+					
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
+				
+				
+			}
+		});
 		btnAlterar.setText("Alterar");
 		btnAlterar.setBounds(130, 106, 75, 25);
 		
 		Button btnExcluir = new Button(this, SWT.NONE);
+		btnExcluir.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				try {
+					
+					int idSelecionado = listaAlunos.get(tabelaAlunos.getSelectionIndex()).getIdAluno();
+					Aluno.exclui(idSelecionado);
+					
+					preencheTabela();
+					
+					
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
+				
+			}
+		});
 		btnExcluir.setText("Excluir");
 		btnExcluir.setBounds(248, 106, 75, 25);
 		
@@ -109,6 +180,64 @@ public class TelaCadastroAluno extends Composite {
 		TableColumn tblclmnNascimento = new TableColumn(tabelaAlunos, SWT.NONE);
 		tblclmnNascimento.setWidth(100);
 		tblclmnNascimento.setText("Nascimento");
+		
+		btnSalvarAlteracoes = new Button(this, SWT.NONE);
+		btnSalvarAlteracoes.setEnabled(false);
+		btnSalvarAlteracoes.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				String novaData = dataNasc.getYear()+"-"+(dataNasc.getMonth()+1)+"-"+dataNasc.getDay();
+				
+				
+				Aluno.altera(editandoId, txtNomeAluno.getText(), novaData);
+				
+				//System.out.println(editandoId);
+				
+				preencheTabela();
+				
+			}
+		});
+		btnSalvarAlteracoes.setBounds(219, 46, 104, 25);
+		btnSalvarAlteracoes.setText("Salvar altera\u00E7\u00F5es");
+		
+		btnExcluirTudo = new Button(this, SWT.NONE);
+		btnExcluirTudo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				try {
+					
+					// create a dialog with ok and cancel buttons and a question icon
+					MessageBox dialog = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.OK| SWT.CANCEL);
+					dialog.setText("Confirme a ação");
+					dialog.setMessage("Esta ação apagará tudo, continuar?");
+					
+
+					// open dialog and await user selection
+					int buttonID = dialog.open();
+					switch(buttonID) {
+			          
+						//se clicar ok
+						case SWT.OK:
+							Aluno.excluiTudo();
+							preencheTabela();
+							break;
+							
+						//se o botão clicado for o cancelar	
+				        case SWT.CANCEL:
+			        	
+			        }
+					
+					
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}	
+				
+			}
+		});
+		btnExcluirTudo.setBounds(347, 435, 75, 25);
+		btnExcluirTudo.setText("Excluir tudo");
 
 		preencheTabela();
 		
@@ -137,6 +266,4 @@ public class TelaCadastroAluno extends Composite {
 		}
 		
 	}
-	
-	
 }

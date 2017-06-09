@@ -79,6 +79,71 @@ public class Aluno {
 	}
 	
 	
+	//alterar aluno
+	public static void altera(Integer idAluno, String nome, String data){
+		
+		String sql = "UPDATE aluno SET alu_nome = ?, alu_nascimento = ? WHERE alu_id = ?";
+					
+		try {
+			
+			PreparedStatement ps = Principal.conn.prepareStatement(sql);
+			
+			ps.setString(1, nome);
+			ps.setString(2, data);
+			ps.setInt(3, idAluno);
+			ps.executeUpdate();
+			
+			//System.out.println(idAluno);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}			
+		
+	}
+	
+
+
+	//excluir
+	public static void exclui(Integer idAluno){
+		
+		String sql = "DELETE FROM aluno WHERE alu_id = ?";
+					
+		try {
+			
+			PreparedStatement ps = Principal.conn.prepareStatement(sql);
+			
+			ps.setInt(1, idAluno);
+			ps.executeUpdate();
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}			
+		
+	}
+	
+	
+	
+	//excluir tudo
+	public static void excluiTudo(){
+		
+		String sql = "DELETE FROM aluno";
+					
+		try {
+			
+			PreparedStatement ps = Principal.conn.prepareStatement(sql);
+		
+			ps.executeUpdate();
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}			
+		
+	}
+	
+	
 	
 	public String getDtBr(){
 		try {
