@@ -43,7 +43,7 @@ public class Principal extends Shell {
 		super(display, SWT.SHELL_TRIM);
 		
 		CTabFolder tabFolder = new CTabFolder(this, SWT.BORDER);
-		tabFolder.setBounds(10, 10, 687, 489);
+		tabFolder.setBounds(10, 10, 687, 596);
 		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
 		CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
@@ -51,6 +51,12 @@ public class Principal extends Shell {
 		
 		Composite composite = new TelaCadastroAluno(tabFolder, SWT.NONE);
 		tabItem.setControl(composite);
+		
+		CTabItem tbtmMatrcula = new CTabItem(tabFolder, SWT.NONE);
+		tbtmMatrcula.setText("Matr\u00EDcula");
+		
+		Composite TelaMatricula = new TelaMatricula(tabFolder, SWT.NONE);
+		tbtmMatrcula.setControl(TelaMatricula);
 		createContents();
 	}
 
@@ -59,7 +65,7 @@ public class Principal extends Shell {
 	 */
 	protected void createContents() {
 		setText("SWT Application");
-		setSize(723, 548);
+		setSize(723, 655);
 
 	}
 
@@ -67,9 +73,4 @@ public class Principal extends Shell {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-	
-	
-
-	
-	
 }
