@@ -144,6 +144,40 @@ public class Aluno {
 	}
 	
 	
+	//busca por registros
+	public static ArrayList<Aluno> busca(String textoBuscar){
+		
+		String sql = "SELECT * FROM aluno WHERE alu_nome LIKE ? ORDER BY alu_nome";
+		ArrayList<Aluno> listaBusca = new ArrayList<Aluno>();
+		
+		try {
+			
+			PreparedStatement ps = Principal.conn.prepareStatement(sql);
+			
+			//pega texto que é pra buscar
+			ps.setString(1, "%"+textoBuscar+"%");
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()){
+				Aluno a = new Aluno();
+				a.setIdAluno(rs.getInt("alu_id"));
+				a.setNomeAluno(rs.getString("alu_nome"));
+				a.setDataNasc(df.parse(rs.getString("alu_nascimento")));
+				
+				listaBusca.add(a);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return listaBusca;
+	}
+	
+	
+	
+	
 	
 	public String getDtBr(){
 		try {

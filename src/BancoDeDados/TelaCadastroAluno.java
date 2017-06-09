@@ -7,6 +7,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.DateTime;
@@ -16,21 +18,28 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ModifyEvent;
 
 public class TelaCadastroAluno extends Composite {
-	private Text text_1;
 	private Table tabelaAlunos;
 	private DateTime dataNasc;
 	private Button btnAlterar;
 	private Button btnSalvarAlteracoes;
 	
-	
 	private Integer editandoId;
 	public String guardaIndice;
 	
 	
-	private ArrayList<Aluno> listaAlunos = new ArrayList<Aluno>();
 	private Button btnExcluirTudo;
+	private Text txtFiltro;
+	
+	
+	private ArrayList<Aluno> listaAlunos = new ArrayList<Aluno>();
+	private ArrayList<Aluno> listaBuscados = new ArrayList<Aluno>();
+	private Text txtNomeAluno;
 	
 
 	/**
@@ -45,7 +54,7 @@ public class TelaCadastroAluno extends Composite {
 		lblNome.setBounds(10, 13, 55, 15);
 		lblNome.setText("Nome:");
 		
-		Text txtNomeAluno = new Text(this, SWT.BORDER);
+		txtNomeAluno = new Text(this, SWT.BORDER);
 		txtNomeAluno.setBounds(80, 10, 342, 21);
 		
 		Label lblNascimento = new Label(this, SWT.NONE);
@@ -157,8 +166,15 @@ public class TelaCadastroAluno extends Composite {
 		btnExcluir.setText("Excluir");
 		btnExcluir.setBounds(248, 106, 75, 25);
 		
-		text_1 = new Text(this, SWT.BORDER);
-		text_1.setBounds(59, 152, 363, 21);
+		txtFiltro = new Text(this, SWT.BORDER);
+		txtFiltro.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
+				
+				preencheBuscados(txtFiltro.getText());
+				
+			}
+		});
+		txtFiltro.setBounds(59, 152, 363, 21);
 		
 		Label lblFiltro = new Label(this, SWT.NONE);
 		lblFiltro.setText("Filtro");
@@ -266,4 +282,46 @@ public class TelaCadastroAluno extends Composite {
 		}
 		
 	}
+	
+	
+	
+	//preenche tabela com resultados da busca
+	private void preencheBuscados(String textoBuscar){
+		
+		//textoBuscar = charAt(textoBuscar);
+		
+		listaBuscados = Aluno.busca(textoBuscar);
+		
+		//limpa tabela
+		tabelaAlunos.setItemCount(0);
+		
+		for(Aluno ab : listaBuscados){
+			
+			TableItem it = new TableItem(tabelaAlunos, SWT.NONE);
+			
+			it.setText(0, ab.getIdAluno()+"");
+			it.setText(1, ab.getNomeAluno());
+			it.setText(2, ab.getDtBr());
+			
+		}
+		
+	}
+	
+	
+	//LIMPA TELA
+	private void limpaTela(){
+		
+		txtNomeAluno.setText("");
+		Date hoje = new Date();
+		DateFormat df = new SimpleDateFormat("dd,MM,yyyy");
+		String[] dtSeparada = df.format(hoje).split(",");
+		dataNasc.setDay(Integer.parseInt(dtSeparada[0]));
+		dataNasc.setMonth(Integer.parseInt(dtSeparada[0]));
+		dataNasc.setYear(Integer.parseInt(dtSeparada[0]));
+		
+	}
+	
+	
+	
+	
 }
