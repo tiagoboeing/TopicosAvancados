@@ -10,7 +10,7 @@ public class Matricula {
 	
 	
 	
-	private void cadastraMatricula(){
+	public void cadastraMatricula(){
 
 			String sql = "INSERT INTO aluno_disciplina (adisc_alu_id, adisc_disc_id)" + "VALUES (?, ?)";
 			

@@ -27,7 +27,7 @@ public class Aluno {
 	
 	//formata data
 	private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-	private static DateFormat dfBr = new SimpleDateFormat("dd/MM/yyyy");
+	public static DateFormat dfBr = new SimpleDateFormat("dd/MM/yyyy");
 	
 	
 	public static ArrayList<Aluno> listaTodos(){

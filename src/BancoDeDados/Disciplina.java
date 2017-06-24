@@ -42,6 +42,45 @@ public class Disciplina {
 	
 	
 	
+	//busca por registros
+	
+	public static ArrayList<Disciplina> buscaDisciplina(String textoBuscar){
+		
+		String sql = "select * from disciplina where disc_nome like ? order by disc_nome";
+		ArrayList<Disciplina> listaBusca = new ArrayList<Disciplina>();
+		
+		try {
+			
+			PreparedStatement ps = Principal.conn.prepareStatement(sql);
+			
+			//pega texto e faz buscar
+			ps.setString(1, "%"+textoBuscar+"%");
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()){
+				
+				Disciplina d = new Disciplina();
+				
+				d.setIdDisciplina(rs.getInt("disc_id"));
+				d.setSemestreDisciplina(rs.getInt("disc_semestre"));
+				d.setNomeDisciplina(rs.getString("disc_nome"));
+				d.setCursoDisciplina(rs.getString("disc_curso"));
+				
+				listaBusca.add(d);
+				
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return listaBusca;
+	}
+			
+	
+	
 	
 	public Integer getIdDisciplina() {
 		return idDisciplina;

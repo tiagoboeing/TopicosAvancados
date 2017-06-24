@@ -58,6 +58,7 @@ public class Principal extends Shell {
 		Composite TelaMatricula = new TelaMatricula(tabFolder, SWT.NONE);
 		tbtmMatrcula.setControl(TelaMatricula);
 		createContents();
+		
 	}
 
 	/**
