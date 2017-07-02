@@ -45,13 +45,13 @@ public class JanelaPrincipal extends Shell {
 		tabFolder.setBounds(10, 10, 616, 582);
 		
 		TabItem tbtmCadastroDePessoas = new TabItem(tabFolder, SWT.NONE);
-		tbtmCadastroDePessoas.setText("cadastro de Pessoas");
+		tbtmCadastroDePessoas.setText("Cadastro de Pessoas");
 		
 		Composite composite = new TelaCadPessoa(tabFolder, SWT.NONE);
 		tbtmCadastroDePessoas.setControl(composite);
 		
 		TabItem tbtmCadastroDeHobbies = new TabItem(tabFolder, SWT.NONE);
-		tbtmCadastroDeHobbies.setText("cadastro de Hobbies");
+		tbtmCadastroDeHobbies.setText("Cadastro de Hobbies");
 		
 		Composite composite_1 = new TelaCadHobbies(tabFolder, SWT.NONE);
 		tbtmCadastroDeHobbies.setControl(composite_1);
@@ -59,8 +59,8 @@ public class JanelaPrincipal extends Shell {
 		TabItem tbtmAssociarHobbies = new TabItem(tabFolder, SWT.NONE);
 		tbtmAssociarHobbies.setText("Associar Hobbies");
 		
-		Composite composite_2 = new TelaAssociarHobbies(tabFolder, SWT.NONE);
-		tbtmAssociarHobbies.setControl(composite_2);
+		Composite compositeAssociar = new TelaAssociarHobbies(tabFolder, SWT.NONE);
+		tbtmAssociarHobbies.setControl(compositeAssociar);
 		createContents();
 	}
 

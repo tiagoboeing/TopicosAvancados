@@ -11,7 +11,10 @@ public class Pessoa {
 	private int id;
 	private String nome;
 	private String sexo;
+	
 	private String nascimento;
+	// poderia ter sido utilizado tipo DATE no nascimento
+	
 	private int idade;
 	
 	//private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -39,7 +42,7 @@ public class Pessoa {
 		}
 	}
 
-	public void altera() {
+	public void alteraPessoa(Pessoa p) {
 		
 		String sql = "UPDATE pessoa SET nome = ?, dtnasc = ?, sexo = ? WHERE codigo = ?";
 		
@@ -47,10 +50,10 @@ public class Pessoa {
 			
 			PreparedStatement ps = JanelaPrincipal.conn.prepareStatement(sql);
 			
-			ps.setString(1, getNome());
-			ps.setString(2, getNascimento());
-			ps.setString(3, getSexo());
-			ps.setInt(4, getId());
+			ps.setString(1, p.getNome());
+			ps.setString(2, p.getNascimento());
+			ps.setString(3, p.getSexo());
+			ps.setInt(4, p.getId());
 			
 			ps.executeUpdate();
 			
@@ -106,6 +109,46 @@ public class Pessoa {
 		
 		return listaPessoas;
 	}
+	
+	
+	
+	
+	//busca por registros
+	public static ArrayList<Pessoa> busca(String textoBuscar){
+		
+		String sql = "SELECT codigo, nome, sexo, dtnasc, CURRENT_TIMESTAMP - dtnasc AS idade FROM pessoa WHERE nome LIKE ? ORDER BY nome ASC";
+		ArrayList<Pessoa> listaBusca = new ArrayList<Pessoa>();
+		
+		try {
+			
+			PreparedStatement ps = JanelaPrincipal.conn.prepareStatement(sql);
+			
+			//pega texto que é pra buscar
+			ps.setString(1, "%"+textoBuscar+"%");
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()){
+				
+				Pessoa p = new Pessoa();
+				p.setId(rs.getInt("codigo"));
+				p.setNome(rs.getString("nome"));
+				p.setIdade(rs.getInt("idade"));
+				p.setSexo(rs.getString("sexo"));
+				p.setNascimento(rs.getString("dtnasc"));
+				
+				
+				listaBusca.add(p);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return listaBusca;
+	}
+	
+	
 	
 
 

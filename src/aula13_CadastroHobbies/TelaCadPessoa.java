@@ -1,19 +1,12 @@
 package aula13_CadastroHobbies;
 
 import org.eclipse.swt.widgets.Composite;
-
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import BancoDeDados.Aluno;
-
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -23,6 +16,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ModifyEvent;
 
 public class TelaCadPessoa extends Composite {
 	private Text txtNomePessoa;
@@ -31,6 +26,8 @@ public class TelaCadPessoa extends Composite {
 	private Button btnMasculino;
 	private Button btnFeminino;
 	private DateTime dataNasc;
+	
+	private Integer idEditar;
 	
 	ArrayList<Pessoa> listaFiltrada = new ArrayList<Pessoa>();
 	ArrayList<Pessoa> listaTodasPessoas = new ArrayList<Pessoa>();
@@ -93,6 +90,8 @@ public class TelaCadPessoa extends Composite {
 					p.cadastra();
 					
 					preencheTela();
+					limpaTela();
+					
 					
 				} catch (Exception c) {
 					c.printStackTrace();
@@ -109,7 +108,27 @@ public class TelaCadPessoa extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				
+				// apenas como alternativa, previne erro do programa caso não haja id
+				if(idEditar != null){
+					
+					// passa dados alterados
+					Pessoa p = new Pessoa();
+					
+					p.setId(idEditar);
+					
+					p.setNome(txtNomePessoa.getText());
+					p.setSexo(checaSexo(btnMasculino.getSelection(), btnFeminino.getSelection()));
+	
+					String data = dataNasc.getYear() + "-" + (dataNasc.getMonth()+1) + "-" + dataNasc.getDay();
+					p.setNascimento(data);
+					
+					// passa objeto pessoa
+					p.alteraPessoa(p);
+					
+					preencheTela();
+					limpaTela();
+					
+				}
 				
 				
 			}
@@ -122,8 +141,10 @@ public class TelaCadPessoa extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				Pessoa.excluiPessoa(listaTodasPessoas.get(tabelaListaPessoas.getSelectionIndex()).getId());
-				preencheTela();
+				if(tabelaListaPessoas.getSelectionIndex() != -1){
+					Pessoa.excluiPessoa(listaTodasPessoas.get(tabelaListaPessoas.getSelectionIndex()).getId());
+					preencheTela();
+				}
 				
 			}
 		});
@@ -136,6 +157,38 @@ public class TelaCadPessoa extends Composite {
 		lblFiltro.setText("Filtro");
 
 		txtFiltro = new Text(composite, SWT.BORDER);
+		txtFiltro.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
+				
+				listaFiltrada = Pessoa.busca(txtFiltro.getText());
+				
+				//limpa tabela
+				tabelaListaPessoas.setItemCount(0);
+				
+				for(Pessoa p : listaFiltrada){
+					
+					TableItem it = new TableItem(tabelaListaPessoas, SWT.NONE);
+					
+					it.setText(0, p.getId()+"");
+					it.setText(1, p.getNome());
+					it.setText(2, retornarSexo(p.getSexo()));
+					
+					String idade = p.getIdade() + "";
+					if(p.getIdade() == 0){
+						idade = "";
+					} else if(p.getIdade() == 1){
+						idade = p.getIdade() + " ano";
+					} else if (p.getIdade() < 0){
+						idade = "-";
+					} else{
+						idade = p.getIdade() + " anos";
+					}
+					it.setText(3, idade);
+					
+				}
+				
+			}
+		});
 		txtFiltro.setBounds(86, 208, 254, 26);
 
 		tabelaListaPessoas = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION);
@@ -160,10 +213,17 @@ public class TelaCadPessoa extends Composite {
 				
 				txtNomePessoa.setText(listaTodasPessoas.get(tabelaListaPessoas.getSelectionIndex()).getNome());
 				
-				Date data = formataData(listaTodasPessoas.get(tabelaListaPessoas.getSelectionIndex()).getNascimento());
 				
+				String data = listaTodasPessoas.get(tabelaListaPessoas.getSelectionIndex()).getNascimento();
+				String dados[] = data.split("-");
 				
-				//Pessoa.excluiPessoa(listaTodasPessoas.get(tabelaListaPessoas.getSelectionIndex()).getId());
+				dataNasc.setDay(Integer.parseInt(dados[2]));
+				dataNasc.setMonth(Integer.parseInt(dados[1])-1);
+				dataNasc.setYear(Integer.parseInt(dados[0]));
+				
+				// passa id para variável
+				idEditar = listaTodasPessoas.get(tabelaListaPessoas.getSelectionIndex()).getId();
+				
 				preencheTela();
 				
 				
@@ -215,34 +275,12 @@ public class TelaCadPessoa extends Composite {
 		
 	}
 
-	private String retornarSexo(String sexo) {
+	private static String retornarSexo(String sexo) {
 		if (sexo.equals("M")) {
 			return "Masculino";
 		} else {
 			return "Feminino";
 		}
-	}
-
-	// Preenche tabela com resultados da busca
-	private void preencheTabelaFiltrando(String textoBuscar) {
-
-		// textoBuscar = charAt(textoBuscar);
-
-		//listaFiltrada = Pessoa.busca(textoBuscar);
-
-		// limpa tabela
-		tabelaListaPessoas.setItemCount(0);
-
-		for (Pessoa p : listaFiltrada) {
-
-			TableItem it = new TableItem(tabelaListaPessoas, SWT.NONE);
-
-			it.setText(0, p.getId() + "");
-			it.setText(1, p.getNome());
-			//it.setText(2, p.getdataBrasil());
-
-		}
-
 	}
 	
 	
@@ -280,7 +318,7 @@ public class TelaCadPessoa extends Composite {
 	
 	
 	
-	private Date formataData(String data){
+	/* private Date formataData(String data){
 		
 		Date date = new Date();
 		
@@ -297,16 +335,29 @@ public class TelaCadPessoa extends Composite {
 		
 		return date;
 		
-	}
+	} */
 	
 	
-	public String getPegaDataAtual() {
+	public static String getPegaDataAtual() {
 		
 		Date data = new Date(System.currentTimeMillis());  
 		SimpleDateFormat formatarDate = new SimpleDateFormat("dd-MM-yyyy"); 
-		System.out.print(formatarDate.format(data));
 		
 		return formatarDate.format(data);
+	}
+	
+	
+	
+	private void limpaTela(){
+		
+		txtNomePessoa.setText("");
+		btnMasculino.setSelection(true);
+		
+		String dados[] = getPegaDataAtual().split("-");
+		dataNasc.setDay(Integer.parseInt(dados[0]));
+		dataNasc.setMonth(Integer.parseInt(dados[1])-1);
+		dataNasc.setYear(Integer.parseInt(dados[2]));
+		
 	}
 	
 
