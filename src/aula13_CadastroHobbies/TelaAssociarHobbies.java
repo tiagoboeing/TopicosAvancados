@@ -3,7 +3,6 @@ package aula13_CadastroHobbies;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -46,6 +45,18 @@ public class TelaAssociarHobbies extends Composite {
 		lblPessoa.setText("Pessoa");
 		
 		comboPessoa = new CCombo(this, SWT.BORDER);
+		comboPessoa.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				if(comboPessoa.getSelectionIndex() != 0){
+					preencheAssociacoes();
+				} else {
+					tabelaHobbiesPessoa.setItemCount(0);
+				}
+				
+			}
+		});
 		comboPessoa.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -66,7 +77,7 @@ public class TelaAssociarHobbies extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				listaHobbies.get(comboHobbie.getSelectionIndex()-1).getId();
+//				listaHobbies.get(comboHobbie.getSelectionIndex()-1).getId();
 				
 			}
 		});
@@ -90,6 +101,9 @@ public class TelaAssociarHobbies extends Composite {
 				if(!comboPessoa.getText().equalsIgnoreCase("SELECIONE UMA PESSOA") && !comboHobbie.getText().equalsIgnoreCase("SELECIONE UM HOBBIE")){
 					
 					associarHobbie(listaPessoas.get(comboPessoa.getSelectionIndex()-1).getId(), listaHobbies.get(comboHobbie.getSelectionIndex()-1).getId());
+					
+					preencheAssociacoes();
+					
 					
 				} else {
 					
@@ -207,12 +221,13 @@ public class TelaAssociarHobbies extends Composite {
 	
 	//busca por registros
 	private static ArrayList<Hobbie> hobbiesPessoa(Integer idPessoa){
-		
-		String sql = "SELECT h.codigo AS hob_id, h.nome AS hob_nome "
-				+ "FROM hobbie h, hobbie_pessoa a, pessoa p"
+				
+		String sql = "SELECT h.codigo AS codigo, h.nome AS nome "
+				+ "FROM hobbie h, hobbie_pessoa a, pessoa p "
 				+ "WHERE a.pessoa = ? "
 				+ "AND h.codigo = a.hobbie "
 				+ "AND p.codigo = ?";
+		
 		ArrayList<Hobbie> listaAssociacoes = new ArrayList<Hobbie>();
 		
 		try {
@@ -228,8 +243,8 @@ public class TelaAssociarHobbies extends Composite {
 			while(rs.next()){
 				
 				Hobbie h = new Hobbie();
-				h.setId(rs.getInt("hob_id"));
-				h.setNome(rs.getString("hob_nome"));
+				h.setId(rs.getInt("codigo"));
+				h.setNome(rs.getString("nome"));
 				
 				listaAssociacoes.add(h);
 			}
@@ -241,6 +256,26 @@ public class TelaAssociarHobbies extends Composite {
 		return listaAssociacoes;
 	}
 	
+	
+	
+	private void preencheAssociacoes(){
+		
+		// limpa tabela
+		tabelaHobbiesPessoa.setItemCount(0);
+		
+		// chama listar hobbies da pessoa
+		listaHobbiesPessoa = hobbiesPessoa(listaPessoas.get(comboPessoa.getSelectionIndex()-1).getId());
+		
+		lblPessoaSelecionada.setText(listaPessoas.get(comboPessoa.getSelectionIndex()-1).getNome());
+					
+		for(Hobbie ha : listaHobbiesPessoa){
+			
+			TableItem it = new TableItem(tabelaHobbiesPessoa, SWT.NONE);
+			it.setText(0, ha.getNome());
+			
+		}
+		
+	}
 	
 	
 }
