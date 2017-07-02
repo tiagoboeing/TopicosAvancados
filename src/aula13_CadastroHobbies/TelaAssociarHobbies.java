@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class TelaAssociarHobbies extends Composite {
 	
@@ -132,7 +133,27 @@ public class TelaAssociarHobbies extends Composite {
 		lblHobbiesPessoa.setText("Hobbies de: ");
 		
 		tabelaHobbiesPessoa = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-		tabelaHobbiesPessoa.setBounds(10, 184, 314, 262);
+		tabelaHobbiesPessoa.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				
+				if(tabelaHobbiesPessoa.getSelectionIndex() != -1){
+					
+					// pega id da pessoa
+					Integer idPessoa = listaPessoas.get(comboPessoa.getSelectionIndex()-1).getId();
+					
+					// pega id do hobbie clicado na listagem
+					listaHobbies = hobbiesPessoa(idPessoa);
+					Integer idHobbie = listaHobbies.get(tabelaHobbiesPessoa.getSelectionIndex()).getId();
+					
+					excluiAssociacao(idPessoa, idHobbie);
+					preencheAssociacoes();
+
+				}
+				
+			}
+		});
+		tabelaHobbiesPessoa.setBounds(10, 184, 314, 256);
 		tabelaHobbiesPessoa.setHeaderVisible(true);
 		tabelaHobbiesPessoa.setLinesVisible(true);
 		
@@ -142,6 +163,11 @@ public class TelaAssociarHobbies extends Composite {
 		
 		lblPessoaSelecionada = new Label(this, SWT.NONE);
 		lblPessoaSelecionada.setBounds(82, 151, 290, 15);
+		
+		Label lblCliqueDuasVezes = new Label(this, SWT.NONE);
+		lblCliqueDuasVezes.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		lblCliqueDuasVezes.setBounds(10, 450, 314, 15);
+		lblCliqueDuasVezes.setText("Clique duas vezes para excluir");
 
 		
 		preenchePessoas();
@@ -222,7 +248,7 @@ public class TelaAssociarHobbies extends Composite {
 	//busca por registros
 	private static ArrayList<Hobbie> hobbiesPessoa(Integer idPessoa){
 				
-		String sql = "SELECT h.codigo AS codigo, h.nome AS nome "
+		String sql = "SELECT h.codigo AS codigo, h.nome AS nome, p.codigo AS pes_codigo "
 				+ "FROM hobbie h, hobbie_pessoa a, pessoa p "
 				+ "WHERE a.pessoa = ? "
 				+ "AND h.codigo = a.hobbie "
@@ -276,6 +302,30 @@ public class TelaAssociarHobbies extends Composite {
 		}
 		
 	}
+	
+	
+	
+	private void excluiAssociacao(Integer idPessoa, Integer idHobbie){
+		
+		String sql = "DELETE FROM hobbie_pessoa WHERE pessoa = ? AND hobbie = ?";
+		
+		try {
+		
+			PreparedStatement ps = JanelaPrincipal.conn.prepareStatement(sql);
+			
+			//pega id da pessoa
+			ps.setInt(1, idPessoa);
+			ps.setInt(2, idHobbie);
+			
+			ps.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+	}
+	
 	
 	
 }
